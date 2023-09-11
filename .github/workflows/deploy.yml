@@ -1,4 +1,4 @@
-name: Deploy to EC2
+name: Deploy to Elastic Beanstalk
 
 on:
   push:
@@ -10,19 +10,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      -uses: actions/checkout@v2
-      -name: create a zip deployment package
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create a zip deployment package
         run: zip -r deploy.zip ./
 
-
-     -name: Deploy to Elastic Beanstack
-      uses: einaregilsson/beanstalk-deploy@v21
-      with:
-        aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
-        aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-        application_name: laravel-staging
-        environment_name: Laravel-staging-env
-        existing_bucket_name: elasticbeanstalk-ap-south-1-965981355588
-        region: ap-south-1
-        version_label: ${{ github.sha }}
-        deployment_package: deploy.zip
+      - name: Deploy to Elastic Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v21
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+          application_name: laravel-staging
+          environment_name: Laravel-staging-env
+          existing_bucket_name: elasticbeanstalk-ap-south-1-965981355588
+          region: ap-south-1
+          version_label: ${{ github.sha }}
+          deployment_package: deploy.zip
