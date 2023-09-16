@@ -33,7 +33,15 @@ class LoginRequest extends FormRequest
 
     public function failedValidation(Validator $validator)
     {
-        // send error message
-        Helper::sendError('validation error',$validator->errors());
+        $errors = $validator->errors();
+
+        // Check if the email or password validation failed
+        if ($errors->has('email') || $errors->has('password')) {
+            // Return a custom error message for email or password mismatch
+            return Helper::sendError('Email or password does not match.', $errors, 422);
+        }
+
+        // For other validation errors, return the standard validation error response
+        return Helper::sendError('Validation error', $errors, 422);
     }
 }

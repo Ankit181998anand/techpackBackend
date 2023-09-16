@@ -57,4 +57,6 @@ class AuthController extends Controller
         // send response
         return response('User Registered Successfully', 200)->header('Content-Type', 'text/plain');
     }
+
+    
 }

@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use App\Http\Helpers\Helper;
 
-class RegisterRequest extends FormRequest
+class InnercatagoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,12 +26,12 @@ class RegisterRequest extends FormRequest
     public function rules()
     {
         return [
-            'username' => 'required|unique:users,username',
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required',
-            'role'=>'required|string'
+            //
+            'innercatName' => 'required',
+            'innersubcatSlug' => 'required',
+            'metaDesc' => 'required',
+            'metaKeyword' => 'required',
+            'subcategoryId' => 'required'
         ];
     }
 
@@ -40,5 +40,4 @@ class RegisterRequest extends FormRequest
         // send error message
         Helper::sendError('validation error',$validator->errors());
     }
-
 }
