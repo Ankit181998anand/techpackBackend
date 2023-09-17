@@ -30,7 +30,7 @@ jobs:
       - name: Generating .env file
         run: |
           cp .env-staging .env
-          php artisan key:generatee
+          php artisan key:generate
 
       - name: Create a zip deployment package
         run: zip -r deploy.zip ./
