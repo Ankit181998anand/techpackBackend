@@ -27,9 +27,10 @@ jobs:
       - name: Dependency Installation
         run: composer install --no-interaction --optimize-autoloader
 
-      -name: Generating .env file
-        run: cp .env-staging .env
-        run: php artisan key:generate
+      - name: Generating .env file
+        run: |
+          cp .env-staging .env
+          php artisan key:generatee
 
       - name: Create a zip deployment package
         run: zip -r deploy.zip ./
