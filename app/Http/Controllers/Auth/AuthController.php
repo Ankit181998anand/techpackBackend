@@ -8,9 +8,11 @@ use App\Http\Helpers\Helper;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\RegisterRequest;
+
 use Spatie\Permission\Models\Role;
 use App\Models\User;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
+
 
 class AuthController extends Controller
 {
@@ -57,6 +59,15 @@ class AuthController extends Controller
         // send response
         return response('User Registered Successfully', 200)->header('Content-Type', 'text/plain');
     }
+
+    public function logout(Request $request)
+    {
+       $user = $request->user();
+       $user->tokens()->delete();
+
+        return response()->json(['message' => 'Successfully logged out']);
+    }
+
 
     
 }

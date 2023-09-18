@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('cat_slug');
             $table->string('meta_desc');
             $table->string('meta_keyword');
+            $table->string('parent_id');
             $table->timestamps();
         });
     }

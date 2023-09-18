@@ -14,6 +14,7 @@ class Category extends Model
         'cat_slug',
         'meta_desc',
         'meta_keyword',
+        'parent_id'
     ];
 
     public function subcategories()

@@ -30,6 +30,7 @@ class CatagoryRequest extends FormRequest
             'catSlug'=> 'required',
             'metaDesc'=> 'required',
             'metaKeyword'=> 'required',
+            'parentId' => 'required'
         ];
     }
 
