@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use App\Http\Helpers\Helper;
 
+
 class RegisterRequest extends FormRequest
 {
     /**
@@ -38,7 +39,7 @@ class RegisterRequest extends FormRequest
     public function failedValidation(Validator $validator)
     {
         // send error message
-        Helper::sendError('validation error',$validator->errors());
+        Helper::sendError('validation error',$validator->errors(),403);
     }
 
 }

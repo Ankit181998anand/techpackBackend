@@ -68,6 +68,13 @@ class AuthController extends Controller
         return response()->json(['message' => 'Successfully logged out']);
     }
 
+    public function checkTokenExpiration(Request $request)
+    {
+        $user = Auth::guard('sanctum')->user();
+
+        return response()->json(['expired' => !$user]);
+    }
+
 
     
 }
