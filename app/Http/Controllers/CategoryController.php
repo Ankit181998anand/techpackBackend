@@ -20,6 +20,7 @@ class CategoryController extends Controller
             'meta_desc' => $request->metaDesc,
             'meta_keyword' => $request->metaKeyword,
             'parent_id' => $request->parentId,
+            'isActive' => '1'
         ]);
 
         return response()->json(['message' => 'Category created successfully', 'category' => $category], 201);
@@ -29,7 +30,7 @@ class CategoryController extends Controller
     public function getAllCatagory()
     {
 
-        $categories = Category::all();
+        $categories = Category::where('isActive', 1)->get();
 
         // Organize categories into a nested array based on parent_id
         $nestedCategories = [];
@@ -73,6 +74,7 @@ class CategoryController extends Controller
             'meta_desc' => $request->metaDesc,
             'meta_keyword' => $request->metaKeyword,
             'parent_id' => $request->parentId,
+            'isActive' => '1'
         ]);
 
         return response()->json(['message' => 'Category updated successfully']);
@@ -81,7 +83,9 @@ class CategoryController extends Controller
 
     public function destroy($id){
         $category = Category::findOrFail($id);
-        $category->delete();
+        $category->update([
+            'isActive' => '0'
+        ]);
 
         return response()->json(['message' => 'Category deleted successfully']);
 

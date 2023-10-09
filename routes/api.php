@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UseController;
+use App\Http\Controllers\ProductController;
 use App\Http\Resources\UserResource;
 
 /*
@@ -26,6 +27,8 @@ Route::post('login',[AuthController::class,'login']);
 Route::post('register',[AuthController::class,'register']);
 Route::post('logout',[AuthController::class,'logout'])->middleware('auth:sanctum');
 Route::post('checkToken',[AuthController::class,'checkTokenExpiration']);
+Route::post('test',[ProductController::class,'test']);
+
 
 
 
@@ -38,6 +41,12 @@ Route::group(['middleware' => ['auth:sanctum','role:Admin']], function () {
     Route::put('/updateCatagory/{id}',[CategoryController::class,'update']);
     Route::delete('/deleteCatagory/{id}',[CategoryController::class,'destroy']);
     Route::get('/getAllUsers',[UseController::class,'getAllUsers']);
+    Route::post('/addproducts',[ProductController::class,'store']);
+    Route::post('/uploadImage',[ProductController::class,'uploadFiles']);
+    Route::get('/getProducts',[ProductController::class,'getallProducts']);
+    Route::put('/updateProduct/{id}',[ProductController::class,'updateProduct']);
+    Route::delete('/deleteProduct/{id}',[ProductController::class,'deleteProduct']);
+    Route::delete('/deleteFiles/{id}',[ProductController::class,'deleteImages']);
 });
 
 
