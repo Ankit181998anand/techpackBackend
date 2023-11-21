@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Products;
+use App\Models\Image;
 
 use Illuminate\Http\Request;
 
@@ -55,19 +56,27 @@ class ProductController extends Controller
             return response()->json(['error' => 'File upload failed.'], 500);
         }
 
+        $fullPath1='https://techpack-frontend-test.s3.ap-south-1.amazonaws.com/'.$path1;
+        $fullPath2='https://techpack-frontend-test.s3.ap-south-1.amazonaws.com/'.$path2;
+        $fullPath3='https://techpack-frontend-test.s3.ap-south-1.amazonaws.com/'.$path3;
 
-        return response()->json(['path1' => 'https://techpack-frontend-test.s3.ap-south-1.amazonaws.com/'.$path1,
-                                 'path2' => 'https://techpack-frontend-test.s3.ap-south-1.amazonaws.com/'.$path2,
-                                 'path3' => 'https://techpack-frontend-test.s3.ap-south-1.amazonaws.com/'.$path3], 200);
+        // $upload = Image::create([
+        //     'image1' => $fullPath1,
+        //     'image2' => $fullPath2,
+        //     'image3' => $fullPath3,
+        //     'product_id'=>$request->productId
+        // ]);
+
+        return response()->json(['massange' => 'image uploded successfully'], 200);
 
     }
 
     public function fileUpload(Request $request){
-        $file = $request->file('image');
+        $file = $request->file('file');
         $fileName = time() . '_' . $file->getClientOriginalName();
 
         try {
-            $path = $file->storeAs('images', $fileName, 's3');
+            $path = $file->storeAs('Files', $fileName, 's3');
         } catch (\Exception $e) {
             \Log::error('S3 Upload Error: ' . $e->getMessage());
             return response()->json(['error' => 'File upload failed.'], 500);

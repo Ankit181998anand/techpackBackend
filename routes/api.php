@@ -46,7 +46,7 @@ Route::group(['middleware' => ['auth:sanctum','role:Admin']], function () {
     Route::put('/updateProduct/{id}',[ProductController::class,'updateProduct']);
     Route::delete('/deleteProduct/{id}',[ProductController::class,'deleteProduct']);
     Route::post('/imageUpload',[ProductController::class,'imageUpload']);
-    
+    Route::post('/fileUpload',[ProductController::class,'fileUpload']);
 });
 
 
