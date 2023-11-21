@@ -22,4 +22,9 @@ class Products extends Model
         'cat_id',
         'isActive'   
     ];
+
+    public function images()
+    {
+        return $this->hasMany(Image::class);
+    }
 }

@@ -45,6 +45,7 @@ Route::group(['middleware' => ['auth:sanctum','role:Admin']], function () {
     Route::get('/getAllProduct',[ProductController::class,'getallProducts']);
     Route::put('/updateProduct/{id}',[ProductController::class,'updateProduct']);
     Route::delete('/deleteProduct/{id}',[ProductController::class,'deleteProduct']);
+    Route::post('/imageUpload',[ProductController::class,'imageUpload']);
     
 });
 
