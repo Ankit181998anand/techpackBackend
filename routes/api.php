@@ -27,7 +27,7 @@ Route::post('login',[AuthController::class,'login']);
 Route::post('register',[AuthController::class,'register']);
 Route::post('logout',[AuthController::class,'logout'])->middleware('auth:sanctum');
 Route::post('checkToken',[AuthController::class,'checkTokenExpiration']);
-Route::post('/addProduct',[ProductController::class,'store']);
+
 
 
 
@@ -41,6 +41,11 @@ Route::group(['middleware' => ['auth:sanctum','role:Admin']], function () {
     Route::put('/updateCatagory/{id}',[CategoryController::class,'update']);
     Route::delete('/deleteCatagory/{id}',[CategoryController::class,'destroy']);
     Route::get('/getAllUsers',[UseController::class,'getAllUsers']);
+    Route::post('/addProduct',[ProductController::class,'store']);
+    Route::get('/getAllProduct',[ProductController::class,'getallProducts']);
+    Route::put('/updateProduct/{id}',[ProductController::class,'updateProduct']);
+    Route::delete('/deleteProduct/{id}',[ProductController::class,'deleteProduct']);
+    
 });
 
 
