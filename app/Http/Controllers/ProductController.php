@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Products;
-use App\Models\Image;
+use App\Models\Images;
 
 use Illuminate\Http\Request;
 
@@ -35,39 +35,48 @@ class ProductController extends Controller
 
     public function imageUpload(Request $request){
 
-        //first Image
-        $file1 = $request->file('image1');
-        $fileName = time() . '_' . $file1->getClientOriginalName();
+        $s3Paths = [];
 
-        //second Image
-        $file2 = $request->file('image2');
-        $fileName = time() . '_' . $file2->getClientOriginalName();
-
-        //third Image
-        $file3 = $request->file('image3');
-        $fileName = time() . '_' . $file3->getClientOriginalName();
-
+        // Define the files and their respective names
+        $files = [
+            'image1' => 'image1',
+            'image2' => 'image2',
+            'image3' => 'image3'
+        ];
+        $count=0;
         try {
-            $path1 = $file1->storeAs('images', $fileName, 's3');
-            $path2 = $file2->storeAs('images', $fileName, 's3');
-            $path3 = $file3->storeAs('images', $fileName, 's3');
+            foreach ($files as $requestFile => $fileName) {
+                if ($request->hasFile($requestFile)) {
+                    $count++;
+                    $file = $request->file($requestFile);
+                    $fileName = time() . '_' . $file->getClientOriginalName();
+                    $path = $file->storeAs('images', $fileName, 's3');
+                    $s3Paths[] = 'https://techpack-frontend-test.s3.ap-south-1.amazonaws.com/'.$path;
+                }
+            }
         } catch (\Exception $e) {
             \Log::error('S3 Upload Error: ' . $e->getMessage());
             return response()->json(['error' => 'File upload failed.'], 500);
         }
 
-        $fullPath1='https://techpack-frontend-test.s3.ap-south-1.amazonaws.com/'.$path1;
-        $fullPath2='https://techpack-frontend-test.s3.ap-south-1.amazonaws.com/'.$path2;
-        $fullPath3='https://techpack-frontend-test.s3.ap-south-1.amazonaws.com/'.$path3;
+        try{
+            foreach($s3Paths as $data){
 
-        // $upload = Image::create([
-        //     'image1' => $fullPath1,
-        //     'image2' => $fullPath2,
-        //     'image3' => $fullPath3,
-        //     'product_id'=>$request->productId
-        // ]);
+                Images::create([
+                    'path'=>$data,
+                    'product_id'=>$request->productId,
+                    'isActive'=>"1"
+                ]);
 
-        return response()->json(['massange' => 'image uploded successfully'], 200);
+            }
+        
+        } 
+        catch(\Exception $e){
+            \Log::error('Database Save Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to save to the database.'], 500);
+        }
+
+        return response()->json(['paths' => $s3Paths, 'message' => 'S3 paths saved successfully']);
 
     }
 
@@ -87,7 +96,8 @@ class ProductController extends Controller
     }
 
     public function getallProducts(){
-        $productsWithUploads = Products::where('isActive', 1)
+        $productsWithUploads = Products::with('images')
+        ->where('isActive', 1) // Add the where clause to filter by isActive
         ->get();
 
         return response()->json(['products' => $productsWithUploads]);
