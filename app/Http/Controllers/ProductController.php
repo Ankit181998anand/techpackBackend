@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 use App\Models\Products;
-
+use App\Models\Image;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -61,22 +62,22 @@ class ProductController extends Controller
             return response()->json(['error' => 'File upload failed.'], 500);
         }
 
-        // try{
-        //     foreach($s3Paths as $data){
+        try{
+            foreach($s3Paths as $data){
 
-        //         Images::create([
-        //             'path'=>$data,
-        //             'product_id'=>$request->productId,
-        //             'isActive'=>"1"
-        //         ]);
+                Image::create([
+                    'image_path'=>$data,
+                    'product_id'=>$request->productId,
+                    'isActive'=>"1"
+                ]);
 
-        //     }
+            }
         
-        // } 
-        // catch(\Exception $e){
-        //     \Log::error('Database Save Error: ' . $e->getMessage());
-        //     return response()->json(['error' => 'Failed to save to the database.'], 500);
-        // }
+        } 
+        catch(\Exception $e){
+            \Log::error('Database Save Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to save to the database.'], 500);
+        }
 
         return response()->json(['paths' => $s3Paths, 'message' => 'S3 paths saved successfully']);
 
@@ -98,10 +99,11 @@ class ProductController extends Controller
     }
 
     public function getallProducts(){
-        $productsWithUploads = Products::where('isActive', 1) // Add the where clause to filter by isActive
+        $productsWithImages =  Products::where('isActive', 1)
+        ->with('images') // Eager load the images relationship
         ->get();
 
-        return response()->json(['products' => $productsWithUploads]);
+        return response()->json(['products' => $productsWithImages]);
     }
 
 
@@ -135,5 +137,22 @@ class ProductController extends Controller
 
         return response()->json(['message' => 'Product Deleted successfully'], 200);
 
+    }
+
+    public function getImagesByProductId($productId) {
+        $images = Image::where('product_id', $productId)->get();
+    
+        return response()->json(['images' => $images]);
+    }
+
+    public function deleteImage($imageId) {
+        try {
+            $image = Image::findOrFail($imageId);
+            $image->delete();
+    
+            return response()->json(['message' => 'Image deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Image not found or could not be deleted'], 404);
+        }
     }
 }
