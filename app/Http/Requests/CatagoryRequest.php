@@ -27,7 +27,7 @@ class CatagoryRequest extends FormRequest
     public function rules()
     {
         return [
-            'catName'=> 'required|unique:categories,cat_name',
+            'catName'=> 'required',
             'catSlug'=> 'required',
             'metaDesc'=> 'required',
             'metaKeyword'=> 'required',
