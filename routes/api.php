@@ -49,6 +49,8 @@ Route::group(['middleware' => ['auth:sanctum','role:Admin']], function () {
     Route::post('/fileUpload',[ProductController::class,'fileUpload']);
     Route::get('/getAllImages/{productId}',[ProductController::class,'getImagesByProductId']);
     Route::delete('/deleteImage/{imageId}',[ProductController::class,'deleteImage']);
+    Route::get('/getFile/{productId}',[ProductController::class,'getFileByProductId']);
+    Route::delete('/deleteFile/{imageId}',[ProductController::class,'deleteFile']);
 });
 
 

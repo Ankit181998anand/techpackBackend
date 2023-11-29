@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Products;
 use App\Models\Image;
+use App\Models\File;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -94,6 +95,13 @@ class ProductController extends Controller
             return response()->json(['error' => 'File upload failed.'], 500);
         }
 
+        File::create([
+            'file_path'=>'https://techpack-files.s3.ap-south-1.amazonaws.com/'.$path,
+            'product_id'=>$request->productId,
+            'isActive'=>"1"
+        ]);
+
+
         return response()->json(['path' => 'https://techpack-files.s3.ap-south-1.amazonaws.com/'.$path], 200);
 
     }
@@ -153,6 +161,23 @@ class ProductController extends Controller
             return response()->json(['message' => 'Image deleted successfully']);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Image not found or could not be deleted'], 404);
+        }
+    }
+
+    public function getFileByProductId($productId) {
+        $images = File::where('product_id', $productId)->get();
+    
+        return response()->json(['images' => $images]);
+    }
+
+    public function deleteFile($imageId) {
+        try {
+            $image = File::findOrFail($imageId);
+            $image->delete();
+    
+            return response()->json(['message' => 'File deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'File not found or could not be deleted'], 404);
         }
     }
 }
