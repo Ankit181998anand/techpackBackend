@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Products;
 use App\Models\Image;
 use App\Models\File;
+use App\Models\Category;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -111,7 +112,31 @@ class ProductController extends Controller
         ->with('images') // Eager load the images relationship
         ->get();
 
+        // Manually fetch the category details for each product
+    foreach ($productsWithImages as $product) {
+        $category = DB::table('categories')->select('cat_name')->where('id', $product->cat_id)->first();
+        $product->cat_name = $category->cat_name;
+    }
+
         return response()->json(['products' => $productsWithImages]);
+    }
+
+    public function getProductById($productId){
+        // Assuming $productId is the product ID you want to retrieve
+        $productWithImages =  Products::where('id', $productId)
+            ->with('images') // Eager load the images relationship
+            ->first();
+
+            $category = DB::table('categories')->select('cat_name')->where('id', $productWithImages->cat_id)->first();
+
+            // Include the category details in the response
+            $productWithImages->cat_name = $category->cat_name;
+    
+        if (!$productWithImages) {
+            return response()->json(['message' => 'Product not found.'], 404);
+        }
+    
+        return response()->json(['product' => $productWithImages]);
     }
 
 

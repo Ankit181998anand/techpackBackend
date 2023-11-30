@@ -29,7 +29,7 @@ Route::post('logout',[AuthController::class,'logout'])->middleware('auth:sanctum
 Route::post('checkToken',[AuthController::class,'checkTokenExpiration']);
 Route::get('/getAllCatagories',[CategoryController::class,'getAllCatagory']);
 Route::get('/getAllProduct',[ProductController::class,'getallProducts']);
-
+Route::get('/getProductById/{productId}',[ProductController::class,'getProductById']);
 
 
 
