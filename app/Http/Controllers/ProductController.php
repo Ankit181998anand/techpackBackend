@@ -139,6 +139,26 @@ class ProductController extends Controller
         return response()->json(['product' => $productWithImages]);
     }
 
+    public function getProductsByCategoryId($categoryId) {
+        // Check if the category exists
+        $category = DB::table('categories')->find($categoryId);
+    
+        if (!$category) {
+            return response()->json(['message' => 'Category not found.'], 404);
+        }
+    
+        // Fetch products with images for the specified category
+        $productsWithImages = Products::where('cat_id', $categoryId)
+            ->where('isActive', 1)
+            ->with('images')
+            ->get();
+    
+        if ($productsWithImages->isEmpty()) {
+            return response()->json(['message' => 'No active products found for the given category.'], 404);
+        }
+    
+        return response()->json(['products' => $productsWithImages]);
+    }
 
     public function updateProduct(Request $request, $id)
     {

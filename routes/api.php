@@ -30,7 +30,7 @@ Route::post('checkToken',[AuthController::class,'checkTokenExpiration']);
 Route::get('/getAllCatagories',[CategoryController::class,'getAllCatagory']);
 Route::get('/getAllProduct',[ProductController::class,'getallProducts']);
 Route::get('/getProductById/{productId}',[ProductController::class,'getProductById']);
-
+Route::get('/getProductByCatId/{categoryId}',[ProductController::class,'getProductsByCategoryId']);
 
 
 
