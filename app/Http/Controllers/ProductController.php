@@ -52,7 +52,7 @@ class ProductController extends Controller
                 if ($request->hasFile($requestFile)) {
                     $count++;
                     $file = $request->file($requestFile);
-                    $fileName = time() . '_' . $file->getClientOriginalName();
+                    $fileName = time() .$requestFile.'_' . $file->getClientOriginalName();
                     \Log::info($fileName);
                     $path = $file->storeAs('images', $fileName, 's3');
                     \Log::info($path);
