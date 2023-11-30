@@ -20,9 +20,9 @@ return new class extends Migration
             $table->string('product_name');
             $table->string('meta_desc');
             $table->string('meta_keyword');
-            $table->string('short_description');
-            $table->string('long_description');
-            $table->string('addi_info');
+            $table->mediumText('short_description');
+            $table->mediumText('long_description');
+            $table->mediumText('addi_info');
             $table->string('product-price');
             $table->string('cat_id');
             $table->string('isActive');
