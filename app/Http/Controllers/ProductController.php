@@ -39,50 +39,41 @@ class ProductController extends Controller
     public function imageUpload(Request $request){
 
         $s3Paths = [];
-
+    
         // Define the files and their respective names
         $files = [
             'image1' => 'image1',
             'image2' => 'image2',
             'image3' => 'image3'
         ];
-        $count=0;
+        $count = 0;
+    
         try {
             foreach ($files as $requestFile => $fileName) {
                 if ($request->hasFile($requestFile)) {
                     $count++;
                     $file = $request->file($requestFile);
-                    $fileName = time() .$requestFile.'_' . $file->getClientOriginalName();
+                    $fileName = time() . '_' . $file->getClientOriginalName();
                     \Log::info($fileName);
                     $path = $file->storeAs('images', $fileName, 's3');
                     \Log::info($path);
-                    $s3Paths[] = 'https://techpack-files.s3.ap-south-1.amazonaws.com/'.$path;
+                    $s3Paths[] = 'https://techpack-files.s3.ap-south-1.amazonaws.com/' . $path;
+    
+                    // Use the $requestFile (e.g., 'image1', 'image2') as the image_type
+                    Image::create([
+                        'image_path' => $s3Paths[count($s3Paths) - 1], // Use the last added path
+                        'product_id' => $request->productId,
+                        'isActive' => "1",
+                        'image_type' => $requestFile
+                    ]);
                 }
             }
         } catch (\Exception $e) {
-            \Log::error('S3 Upload Error: ' . $e->getMessage());
-            return response()->json(['error' => 'File upload failed.'], 500);
+            \Log::error('Upload and Save Error: ' . $e->getMessage());
+            return response()->json(['error' => 'File upload or database save failed.'], 500);
         }
-
-        try{
-            foreach($s3Paths as $data){
-
-                Image::create([
-                    'image_path'=>$data,
-                    'product_id'=>$request->productId,
-                    'isActive'=>"1"
-                ]);
-
-            }
-        
-        } 
-        catch(\Exception $e){
-            \Log::error('Database Save Error: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to save to the database.'], 500);
-        }
-
-        return response()->json(['paths' => $s3Paths, 'message' => 'S3 paths saved successfully']);
-
+    
+        return response()->json(['paths' => $s3Paths, 'message' => 'S3 paths and database records saved successfully']);
     }
 
     public function fileUpload(Request $request){
