@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UseController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ContactController;
 use App\Http\Resources\UserResource;
 
 /*
@@ -52,6 +53,10 @@ Route::group(['middleware' => ['auth:sanctum','role:Admin']], function () {
     Route::delete('/deleteImage/{imageId}',[ProductController::class,'deleteImage']);
     Route::get('/getFile/{productId}',[ProductController::class,'getFileByProductId']);
     Route::delete('/deleteFile/{imageId}',[ProductController::class,'deleteFile']);
+    Route::post('/addquery', [ContactController::class, 'insertContact']);
+    Route::get('/getquery', [ContactController::class, 'getAllContacts']);
+    Route::delete('/deletequery/{id}', [ContactController::class, 'deleteContact']);
+
 });
 
 
