@@ -27,4 +27,14 @@ class Products extends Model
     {
         return $this->hasMany(Image::class, 'product_id');
     }
+
+    public function files()
+    {
+        return $this->hasMany(File::class, 'product_id');
+    }
+
+    public function carts()
+    {
+        return $this->belongsToMany(Cart::class);
+    }
 }

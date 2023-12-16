@@ -32,7 +32,9 @@ class RegisterRequest extends FormRequest
             'last_name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required',
-            'role'=>'required|string'
+            'role'=>'required|string',
+            
+
         ];
     }
 

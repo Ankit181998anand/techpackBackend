@@ -7,6 +7,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UseController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CartController;
 use App\Http\Resources\UserResource;
 
 /*
@@ -29,10 +30,10 @@ Route::post('register',[AuthController::class,'register']);
 Route::post('logout',[AuthController::class,'logout'])->middleware('auth:sanctum');
 Route::post('checkToken',[AuthController::class,'checkTokenExpiration']);
 Route::get('/getAllCatagories',[CategoryController::class,'getAllCatagory']);
-Route::get('/getAllProduct',[ProductController::class,'getallProducts']);
 Route::get('/getProductById/{productId}',[ProductController::class,'getProductById']);
 Route::get('/getProductByCatId/{categoryId}',[ProductController::class,'getProductsByCategoryId']);
 Route::get('/getCatagoriById/{categoryId}',[CategoryController::class,'getCategoryById']);
+Route::get('/getAllProductPublic',[ProductController::class,'getallProductsPublic']);
 
 
 
@@ -45,6 +46,7 @@ Route::group(['middleware' => ['auth:sanctum','role:Admin']], function () {
     Route::delete('/deleteCatagory/{id}',[CategoryController::class,'destroy']);
     Route::get('/getAllUsers',[UseController::class,'getAllUsers']);
     Route::post('/addProduct',[ProductController::class,'store']);
+    Route::get('/getAllProduct',[ProductController::class,'getallProducts']);
     Route::put('/updateProduct/{id}',[ProductController::class,'updateProduct']);
     Route::delete('/deleteProduct/{id}',[ProductController::class,'deleteProduct']);
     Route::post('/imageUpload',[ProductController::class,'imageUpload']);
@@ -56,6 +58,14 @@ Route::group(['middleware' => ['auth:sanctum','role:Admin']], function () {
     Route::post('/addquery', [ContactController::class, 'insertContact']);
     Route::get('/getquery', [ContactController::class, 'getAllContacts']);
     Route::delete('/deletequery/{id}', [ContactController::class, 'deleteContact']);
+
+});
+
+Route::group(['middleware' => ['auth:sanctum','role:Admin|User']], function (){
+
+    Route::post('/addToCart',[CartController::class,'addToCart']);
+    Route::get('/getProducts/{userId}',[CartController::class,'getCartByUserId']);
+
 
 });
 
