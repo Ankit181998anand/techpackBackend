@@ -31,6 +31,25 @@ class CartController extends Controller
         // Fetch the cart items based on the user ID
         $cartItems = Cart::where('user_id', $userId)->get();
 
+        foreach($cartItems as $cartItem){
+            $product = Products::where('id', $cartItem->product_id)
+            ->with(['images']) // Eager load the images relationship
+            ->get();
+            $cartItem->product_details= $product;
+        }
+
         return response()->json(['cart' => $cartItems]);
+    }
+
+    public function deleteFile($ItemId)
+    {
+        try {
+            $Item = Cart::findOrFail($ItemId);
+            $Item->delete();
+
+            return response()->json(['message' => 'Item deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Item not found or could not be deleted'], 404);
+        }
     }
 }

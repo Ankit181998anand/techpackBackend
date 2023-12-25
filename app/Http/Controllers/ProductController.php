@@ -123,7 +123,7 @@ class ProductController extends Controller
     $productsWithImagesAndFiles = Products::where('isActive', 1)
         ->whereHas('images') // Ensure that the product has at least one image
         ->whereHas('files')  // Ensure that the product has at least one file
-        ->with(['images', 'files']) // Eager load the images and files relationships
+        ->with(['images']) // Eager load the images and files relationships
         ->get();
 
     // Manually fetch the category details for each product
@@ -140,7 +140,7 @@ class ProductController extends Controller
     {
         // Assuming $productId is the product ID you want to retrieve
         $productWithImages = Products::where('id', $productId)
-            ->with(['images', 'files']) // Eager load the images relationship
+            ->with(['images']) // Eager load the images relationship
             ->first();
 
         $category = DB::table('categories')->select('cat_name')->where('id', $productWithImages->cat_id)->first();
