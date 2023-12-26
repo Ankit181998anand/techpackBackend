@@ -167,6 +167,8 @@ class ProductController extends Controller
         // Fetch products with images for the specified category
         $productsWithImages = Products::where('cat_id', $categoryId)
             ->where('isActive', 1)
+            ->whereHas('images') 
+            ->whereHas('files')
             ->with('images')
             ->get();
 
