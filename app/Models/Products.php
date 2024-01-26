@@ -18,7 +18,7 @@ class Products extends Model
         'short_description',
         'long_description',
         'addi_info',
-        'product-price',
+        'product_price',
         'cat_id',
         'isActive'   
     ];

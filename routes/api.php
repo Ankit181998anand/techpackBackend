@@ -8,6 +8,7 @@ use App\Http\Controllers\UseController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderControll;
 use App\Http\Resources\UserResource;
 
 /*
@@ -34,6 +35,8 @@ Route::get('/getProductById/{productId}',[ProductController::class,'getProductBy
 Route::get('/getProductByCatId/{categoryId}',[ProductController::class,'getProductsByCategoryId']);
 Route::get('/getCatagoriById/{categoryId}',[CategoryController::class,'getCategoryById']);
 Route::get('/getAllProductPublic',[ProductController::class,'getallProductsPublic']);
+Route::post('/order',[OrderControll::class,'store']);
+Route::put('/completOrders/{orderId}',[OrderControll::class,'updateTransactionId']);
 
 
 
@@ -66,7 +69,8 @@ Route::group(['middleware' => ['auth:sanctum','role:Admin|User']], function (){
     Route::post('/addToCart',[CartController::class,'addToCart']);
     Route::get('/getCartItems/{userId}',[CartController::class,'getCartByUserId']);
     Route::delete('/deleteItem/{ItemId}',[CartController::class,'deleteFile']);
-
+    Route::get('/getCatrProductList/{userId}',[CartController::class,'getCartProductList']);
+    
 });
 
 

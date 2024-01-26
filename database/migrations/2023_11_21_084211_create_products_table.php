@@ -23,7 +23,7 @@ return new class extends Migration
             $table->mediumText('short_description');
             $table->mediumText('long_description');
             $table->mediumText('addi_info');
-            $table->string('product-price');
+            $table->string('product_price');
             $table->string('cat_id');
             $table->string('isActive');
             $table->timestamps();

@@ -29,7 +29,7 @@ class ProductController extends Controller
             'short_description' => $request->shortDescription,
             'long_description' => $request->longDescription,
             'addi_info' => $request->addiInfo,
-            'product-price' => $request->productPrice,
+            'product_price' => $request->productPrice,
             'cat_id' => $request->catId,
             'isActive' => '1'
         ]);
@@ -193,7 +193,7 @@ class ProductController extends Controller
             'short_description' => $request->shortDescription,
             'long_description' => $request->longDescription,
             'addi_info' => $request->addiInfo,
-            'product-price' => $request->productPrice,
+            'product_price' => $request->productPrice,
             'cat_id' => $request->catId,
             'isActive' => '1'
         ]);

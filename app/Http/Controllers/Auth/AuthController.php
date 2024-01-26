@@ -57,7 +57,10 @@ class AuthController extends Controller
             $user_role = Role::where(['name' => 'User'])->first();
             $user->assignRole($user_role);
         }
-        
+        if ($request->role == '') {
+            $user_role = Role::where(['name' => 'User'])->first();
+            $user->assignRole($user_role);
+        }
         // send response
         return response('User Registered Successfully', 200)->header('Content-Type', 'text/plain');
     }

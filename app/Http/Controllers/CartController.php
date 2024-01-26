@@ -31,11 +31,11 @@ class CartController extends Controller
         // Fetch the cart items based on the user ID
         $cartItems = Cart::where('user_id', $userId)->get();
 
-        foreach($cartItems as $cartItem){
+        foreach ($cartItems as $cartItem) {
             $product = Products::where('id', $cartItem->product_id)
-            ->with(['images']) // Eager load the images relationship
-            ->get();
-            $cartItem->product_details= $product;
+                ->with(['images']) // Eager load the images relationship
+                ->get();
+            $cartItem->product_details = $product;
         }
 
         return response()->json(['cart' => $cartItems]);
@@ -52,4 +52,39 @@ class CartController extends Controller
             return response()->json(['error' => 'Item not found or could not be deleted'], 404);
         }
     }
+
+    public function getCartProductList($userId)
+{
+    // Fetch the cart items based on the user ID
+    $cartItems = Cart::where('user_id', $userId)->get();
+    $total = 0;
+
+    foreach ($cartItems as $cartItem) {
+        $product = Products::select('id', 'product_name', 'product_price')
+            ->where('id', $cartItem->product_id)
+            ->first();
+
+            $priceString = $product->product_price;
+
+            // Remove the dollar sign and extract the numeric part
+            $numericPart = preg_replace("/[^0-9.]/", "", $priceString);
+            
+            // Convert the numeric part to a float
+            $priceFloat = (float)$numericPart;
+            $total+=$priceFloat;
+        $product_details[] = [
+            'id' => $product->id,
+            'product_name' => $product->product_name,
+            'product_price' => $product->product_price,
+            
+        ];
+    }
+
+    return response()->json([
+        'total' => $total,
+        'product_details' => $product_details ?? [],
+    ]);
+}
+
+    
 }
