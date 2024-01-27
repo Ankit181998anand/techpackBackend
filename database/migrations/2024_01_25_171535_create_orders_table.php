@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('products');
             $table->string('transaction_id');
             $table->string('status');
+            $table->string('total');
             $table->timestamps();
         });
     }

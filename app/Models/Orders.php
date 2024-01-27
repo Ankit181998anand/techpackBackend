@@ -16,6 +16,7 @@ class Orders extends Model
         'country',
         'products',
         'transaction_id',
-        'status'
+        'status',
+        'total'
     ];
 }

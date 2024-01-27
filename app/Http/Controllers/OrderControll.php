@@ -25,6 +25,7 @@ class OrderControll extends Controller
             'products' => $productsString,
             'transaction_id' => '',
             'status' => 'Pending',
+            'total' => $request->total
 
             
         ]);
