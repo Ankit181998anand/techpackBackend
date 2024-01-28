@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\UserProducts;
 use App\Models\Orders;
 use Illuminate\Http\Request;
 
@@ -53,9 +53,31 @@ class OrderControll extends Controller
             return response()->json(['message' => 'Order not found'], 404);
         }
 
+        $userId = $order->user_id;
         // Update the transaction_id
         $order->transaction_id = $newTransactionId;
+        $order->status = "Complete";
         $order->save();
+
+        // Retrieve products associated with the order
+    $products = $order->products; // Get product IDs as an array
+    $ArrayofProducts = explode(',', $products);
+    // Check if the user already has products stored
+    $userProducts = UserProducts::where('user_id', $userId)->first();
+
+    if ($userProducts) {
+        // Update the array of product IDs for the user
+        $productIds = explode(',', $userProducts->product_ids); // Convert string to array
+        $FinalproductIds = array_unique(array_merge($productIds, $ArrayofProducts));
+        $userProducts->update(['product_ids' => implode(',', $FinalproductIds)]); // Convert array back to string
+    } else {
+        // Create a new record for the user
+        UserProducts::create([
+            'user_id' => $userId,
+            'product_ids' => implode(',', $ArrayofProducts), // Convert array to string
+        ]);
+    }
+
 
         return response()->json(['message' => 'Transaction ID updated successfully']);
     }
