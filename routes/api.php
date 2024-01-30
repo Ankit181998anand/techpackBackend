@@ -37,7 +37,8 @@ Route::get('/getCatagoriById/{categoryId}',[CategoryController::class,'getCatego
 Route::get('/getAllProductPublic',[ProductController::class,'getallProductsPublic']);
 Route::post('/order',[OrderControll::class,'store']);
 Route::put('/completOrders/{orderId}',[OrderControll::class,'updateTransactionId']);
-
+Route::get('/getUserProducts/{userId}',[UseController::class,'getUserProductList']);
+Route::get('/download',[UseController::class,'downloadFile']);
 
 
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\UserProducts;
 use App\Models\Orders;
+use App\Models\Cart;
 use Illuminate\Http\Request;
 
 class OrderControll extends Controller
@@ -21,9 +22,8 @@ class OrderControll extends Controller
             'user_id' => $request->userId,
             'email' => $request->email,
             'contact' => $request->contact,
-            'country' => $request->country,
+            'address' => $request->address,
             'products' => $productsString,
-            'transaction_id' => '',
             'status' => 'Pending',
             'total' => $request->total
 
@@ -42,7 +42,20 @@ class OrderControll extends Controller
 
     public function updateTransactionId(Request $request, $orderId)
     {
-        $newTransactionId = $request->input('transaction_id');
+
+        $validatedData = $request->validate([
+            'orderID' => 'required',
+            'payerID' => 'required',
+            'paymentID' => 'required',
+            'facilitatorAccessToken' => 'required',
+            'paymentSource' => 'required',
+        ]);
+
+        $neworderId = $request->input('orderID');
+        $payerID = $request->input('payerID');
+        $paymentID = $request->input('paymentID');
+        $facilitatorAccessToken = $request->input('facilitatorAccessToken');
+        $paymentSource = $request->input('paymentSource');
 
         // Validate the request if needed
         // ...
@@ -55,13 +68,25 @@ class OrderControll extends Controller
 
         $userId = $order->user_id;
         // Update the transaction_id
-        $order->transaction_id = $newTransactionId;
+        $order->orderID = $neworderId;
+        $order->payerID = $payerID;
+        $order->paymentID = $paymentID;
+        $order->facilitatorAccessToken = $facilitatorAccessToken;
+        $order->paymentSource = $paymentSource;
         $order->status = "Complete";
         $order->save();
 
         // Retrieve products associated with the order
     $products = $order->products; // Get product IDs as an array
     $ArrayofProducts = explode(',', $products);
+
+    //Empty Cart Items
+    
+    foreach ($ArrayofProducts as $productId) {
+        Cart::where('user_id', $userId)->where('product_id', $productId)->delete();
+    }
+
+
     // Check if the user already has products stored
     $userProducts = UserProducts::where('user_id', $userId)->first();
 
@@ -80,6 +105,18 @@ class OrderControll extends Controller
 
 
         return response()->json(['message' => 'Transaction ID updated successfully']);
+    }
+
+    public function emptyCart($userId, $productIds)
+    {
+        // Validate inputs if necessary
+
+        // Loop through each product ID and delete corresponding cart items
+        foreach ($productIds as $productId) {
+            Cart::where('user_id', $userId)->where('product_id', $productId)->delete();
+        }
+
+        return response()->json(['message' => 'Cart items deleted successfully']);
     }
 }
 

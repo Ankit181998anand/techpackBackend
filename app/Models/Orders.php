@@ -13,9 +13,13 @@ class Orders extends Model
         'user_id',
         'email',
         'contact',
-        'country',
+        'address',
         'products',
-        'transaction_id',
+        'orderID',
+        'payerID',
+        'paymentID',
+        'facilitatorAccessToken',
+        'paymentSource',
         'status',
         'total'
     ];

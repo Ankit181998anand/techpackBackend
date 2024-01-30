@@ -17,6 +17,17 @@ class CartController extends Controller
             // Add any other necessary validation rules
         ]);
 
+        // Check if the combination of user_id and product_id already exists in the cart
+        $existingCart = Cart::where('user_id', $request->user_id)
+            ->where('product_id', $request->product_id)
+            ->first();
+
+        if ($existingCart) {
+            // If the combination already exists, return a response indicating that the product is already in the cart
+            return response()->json(['message' => 'Product already exists in the cart'], 409);
+        }
+
+        // If the combination doesn't exist, create a new cart record
         $cart = Cart::create([
             'user_id' => $request->user_id,
             'product_id' => $request->product_id,
@@ -54,37 +65,37 @@ class CartController extends Controller
     }
 
     public function getCartProductList($userId)
-{
-    // Fetch the cart items based on the user ID
-    $cartItems = Cart::where('user_id', $userId)->get();
-    $total = 0;
+    {
+        // Fetch the cart items based on the user ID
+        $cartItems = Cart::where('user_id', $userId)->get();
+        $total = 0;
 
-    foreach ($cartItems as $cartItem) {
-        $product = Products::select('id', 'product_name', 'product_price')
-            ->where('id', $cartItem->product_id)
-            ->first();
+        foreach ($cartItems as $cartItem) {
+            $product = Products::select('id', 'product_name', 'product_price')
+                ->where('id', $cartItem->product_id)
+                ->first();
 
             $priceString = $product->product_price;
 
             // Remove the dollar sign and extract the numeric part
             $numericPart = preg_replace("/[^0-9.]/", "", $priceString);
-            
+
             // Convert the numeric part to a float
-            $priceFloat = (float)$numericPart;
-            $total+=$priceFloat;
-        $product_details[] = [
-            'id' => $product->id,
-            'product_name' => $product->product_name,
-            'product_price' => $product->product_price,
-            
-        ];
+            $priceFloat = (float) $numericPart;
+            $total += $priceFloat;
+            $product_details[] = [
+                'id' => $product->id,
+                'product_name' => $product->product_name,
+                'product_price' => $product->product_price,
+
+            ];
+        }
+
+        return response()->json([
+            'total' => $total,
+            'product_details' => $product_details ?? [],
+        ]);
     }
 
-    return response()->json([
-        'total' => $total,
-        'product_details' => $product_details ?? [],
-    ]);
-}
 
-    
 }

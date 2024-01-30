@@ -234,9 +234,9 @@ class ProductController extends Controller
 
     public function getFileByProductId($productId)
     {
-        $images = File::where('product_id', $productId)->get();
+        $file = File::where('product_id', $productId)->get();
 
-        return response()->json(['images' => $images]);
+        return response()->json(['images' => $file]);
     }
 
     public function deleteFile($imageId)

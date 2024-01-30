@@ -19,9 +19,13 @@ return new class extends Migration
             $table->integer('user_id');
             $table->string('email');
             $table->string('contact');
-            $table->string('country');
+            $table->mediumText('address');
             $table->string('products');
-            $table->string('transaction_id');
+            $table->string('orderID')->nullable();
+            $table->string('payerID')->nullable();
+            $table->string('paymentID')->nullable();
+            $table->mediumText('facilitatorAccessToken')->nullable();
+            $table->string('paymentSource')->nullable();
             $table->string('status');
             $table->string('total');
             $table->timestamps();
