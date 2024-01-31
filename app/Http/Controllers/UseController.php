@@ -104,12 +104,12 @@ class UseController extends Controller
 
         // Get AWS S3 credentials and bucket name from .env file
         $awsCredentials = [
-            'key' => env('AWS_ACCESS_KEY_ID'),
-            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'key' => 'AKIAW7NNEIEVTZUFE25K',
+            'secret' => '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',
         ];
 
         $region = 'ap-south-1';
-        $bucket = env('AWS_BUCKET');
+        $bucket = 'techpack-files';
 
         // Initialize the S3 client
         $s3 = new S3Client([
