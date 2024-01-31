@@ -9,6 +9,7 @@ use App\Models\Download;
 use App\Models\User;
 use App\Models\File;
 use Aws\S3\S3Client;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redirect;
 
@@ -104,13 +105,15 @@ class UseController extends Controller
 
         // Get AWS S3 credentials and bucket name from .env file
         $awsCredentials = [
-            'key' => 'AKIAW7NNEIEVTZUFE25K',
-            'secret' => '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',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
         ];
 
-        $region = 'ap-south-1';
-        $bucket = 'techpack-files';
-
+        $region = env('AWS_DEFAULT_REGION');
+        $bucket = env('AWS_BUCKET');
+        Log::info('AWS Credentials', [$awsCredentials]);
+        Log::info('AWS region:', [$region]);
+        Log::info('AWS bucket:', [$bucket]);
         // Initialize the S3 client
         $s3 = new S3Client([
             'region' => $region,
