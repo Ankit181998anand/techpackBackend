@@ -108,7 +108,7 @@ class UseController extends Controller
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
         ];
 
-        $region = env('AWS_DEFAULT_REGION');
+        $region = 'ap-south-1';
         $bucket = env('AWS_BUCKET');
 
         // Initialize the S3 client

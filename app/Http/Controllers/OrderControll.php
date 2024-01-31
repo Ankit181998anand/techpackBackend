@@ -107,17 +107,6 @@ class OrderControll extends Controller
         return response()->json(['message' => 'Transaction ID updated successfully']);
     }
 
-    public function emptyCart($userId, $productIds)
-    {
-        // Validate inputs if necessary
-
-        // Loop through each product ID and delete corresponding cart items
-        foreach ($productIds as $productId) {
-            Cart::where('user_id', $userId)->where('product_id', $productId)->delete();
-        }
-
-        return response()->json(['message' => 'Cart items deleted successfully']);
-    }
 }
 
 
