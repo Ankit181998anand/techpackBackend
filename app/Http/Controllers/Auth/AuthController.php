@@ -34,33 +34,29 @@ class AuthController extends Controller
     {
         // register user
         $user = User::create([
-            'username'          => $request->username,
-            'first_name'          => $request->first_name,
-            'last_name'          => $request->last_name,
-            'email'         => $request->email,
-            'password'      => bcrypt($request->password),
-            'orders'       =>'0',
-            'revenue'      =>'0'
+            'username'    => $request->username,
+            'first_name'  => $request->first_name,
+            'last_name'   => $request->last_name,
+            'email'       => $request->email,
+            'password'    => bcrypt($request->password),
+            'orders'      => '0',
+            'revenue'     => '0'
         ]);
 
-        
-        // assign role
-        if($request->role == 'super'){
-            $user_role = Role::where(['name' => 'SuperAdmin'])->first();
-            $user->assignRole($user_role);
+        // assign role based on request
+        if ($request->role == 'super') {
+            $user_role = Role::where('name', 'SuperAdmin')->first();
+        } elseif ($request->role == 'admin') {
+            $user_role = Role::where('name', 'Admin')->first();
+        } elseif ($request->role == 'user') {
+            $user_role = Role::where('name', 'User')->first();
+        } else {
+            // default role if no role specified in request
+            $user_role = Role::where('name', 'User')->first();
         }
-        if ($request->role == 'admin') {
-            $user_role = Role::where(['name' => 'Admin'])->first();
-            $user->assignRole($user_role);
-        }
-        if ($request->role == 'user') {
-            $user_role = Role::where(['name' => 'User'])->first();
-            $user->assignRole($user_role);
-        }
-        if ($request->role == '') {
-            $user_role = Role::where(['name' => 'User'])->first();
-            $user->assignRole($user_role);
-        }
+
+        $user->assignRole($user_role);
+
         // send response
         return response('User Registered Successfully', 200)->header('Content-Type', 'text/plain');
     }
