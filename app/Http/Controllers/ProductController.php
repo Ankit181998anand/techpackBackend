@@ -155,6 +155,25 @@ class ProductController extends Controller
         return response()->json(['product' => $productWithImages]);
     }
 
+    public function getProductBySlug($productSlug)
+    {
+        // Assuming $productId is the product ID you want to retrieve
+        $productWithImages = Products::where('product_slug', $productSlug)
+            ->with(['images']) // Eager load the images relationship
+            ->first();
+
+        $category = DB::table('categories')->select('cat_name')->where('id', $productWithImages->cat_id)->first();
+
+        // Include the category details in the response
+        $productWithImages->cat_name = $category->cat_name;
+
+        if (!$productWithImages) {
+            return response()->json(['message' => 'Product not found.'], 404);
+        }
+
+        return response()->json(['product' => $productWithImages]);
+    }
+
     public function getProductsByCategoryId($categoryId)
     {
         // Check if the category exists
@@ -250,4 +269,6 @@ class ProductController extends Controller
             return response()->json(['error' => 'File not found or could not be deleted'], 404);
         }
     }
+
+    
 }

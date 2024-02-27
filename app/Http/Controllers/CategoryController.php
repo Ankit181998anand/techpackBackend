@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Products;
 use App\Models\Category;
 use App\Http\Requests\CatagoryRequest;
 use Illuminate\Support\Facades\Log;
@@ -57,7 +58,7 @@ class CategoryController extends Controller
 
         // Build the category tree starting from the root categories (parent_id = 0)
         $categoryTree = buildCategoryTree($nestedCategories, 0);
-       
+
 
 
         return response()->json(['categories' => $categoryTree], 200);
@@ -77,7 +78,8 @@ class CategoryController extends Controller
         }
     }
 
-    public function update(Request $request,$id){
+    public function update(Request $request, $id)
+    {
 
         $category = Category::findOrFail($id);
 
@@ -94,7 +96,8 @@ class CategoryController extends Controller
 
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
         $category = Category::findOrFail($id);
         $category->update([
             'isActive' => '0'
@@ -103,5 +106,73 @@ class CategoryController extends Controller
         return response()->json(['message' => 'Category deleted successfully']);
 
 
+    }
+
+    public function getCategoryIdsAndChildrenBySlug($categorySlug)
+    {
+        // Retrieve category ID based on the slug
+        $categoryId = Category::where('cat_slug', $categorySlug)
+            ->where('isActive', 1)
+            ->value('id');
+
+        if (!$categoryId) {
+            // If category with the given slug is not found, return an empty response or handle the error as needed
+            return response()->json(['message' => 'Category not found'], 404);
+        }
+
+        Log::info('catagory:', [$categoryId]);
+
+        // Retrieve all categories
+        $categories = Category::where('isActive', 1)->get();
+
+        // Organize categories into a nested array based on parent_id
+        $nestedCategories = [];
+        foreach ($categories as $category) {
+            $parentId = $category['parent_id'];
+            if (!isset($nestedCategories[$parentId])) {
+                $nestedCategories[$parentId] = [];
+            }
+            $nestedCategories[$parentId][] = $category;
+        }
+
+
+        // Helper function to recursively collect category IDs
+        function collectCategoryIds($categories, $parentId)
+        {
+            $categoryIds = [];
+            if (isset($categories[$parentId])) {
+                foreach ($categories[$parentId] as $category) {
+                    $categoryIds[] = $category['id'];
+                    $categoryIds = array_merge($categoryIds, collectCategoryIds($categories, $category['id']));
+                }
+            }
+            return $categoryIds;
+        }
+
+        // Collect category IDs starting from the specified category ID
+        $categoryIds = collectCategoryIds($nestedCategories, $categoryId);
+
+        if (empty($categoryIds)) {
+            $categoryIds = [$categoryId];
+        }
+
+        // Initialize an empty array to store all products
+        $allProducts = [];
+
+        // Fetch products for each category ID and merge them into a single array
+        foreach ($categoryIds as $id) {
+            $productsWithImages = Products::where('cat_id', $id)
+                ->where('isActive', 1)
+                ->whereHas('images')
+                ->whereHas('files')
+                ->with('images')
+                ->get()
+                ->toArray();
+
+            // Merge products into the allProducts array
+            $allProducts = array_merge($allProducts, $productsWithImages);
+        }
+
+        return response()->json(['products' => $allProducts], 200);
     }
 }

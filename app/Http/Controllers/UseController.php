@@ -26,6 +26,7 @@ class UseController extends Controller
 
     }
 
+
     public function getUserProductList($userId)
     {
         // Fetch the cart items based on the user ID

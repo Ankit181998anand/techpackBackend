@@ -32,6 +32,7 @@ Route::post('logout',[AuthController::class,'logout'])->middleware('auth:sanctum
 Route::post('checkToken',[AuthController::class,'checkTokenExpiration']);
 Route::get('/getAllCatagories',[CategoryController::class,'getAllCatagory']);
 Route::get('/getProductById/{productId}',[ProductController::class,'getProductById']);
+Route::get('/getProductBySlug/{productSlug}',[ProductController::class,'getProductBySlug']);
 Route::get('/getProductByCatId/{categoryId}',[ProductController::class,'getProductsByCategoryId']);
 Route::get('/getCatagoriById/{categoryId}',[CategoryController::class,'getCategoryById']);
 Route::get('/getAllProductPublic',[ProductController::class,'getallProductsPublic']);
@@ -39,6 +40,8 @@ Route::post('/order',[OrderControll::class,'store']);
 Route::put('/completOrders/{orderId}',[OrderControll::class,'updateTransactionId']);
 Route::get('/getUserProducts/{userId}',[UseController::class,'getUserProductList']);
 Route::get('/download',[UseController::class,'downloadFile']);
+Route::get('/getProductByCatSlug/{categorySlug}',[CategoryController::class,'getCategoryIdsAndChildrenBySlug']);
+
 
 
 
