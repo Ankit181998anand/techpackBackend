@@ -41,8 +41,9 @@ Route::put('/completOrders/{orderId}',[OrderControll::class,'updateTransactionId
 Route::get('/getUserProducts/{userId}',[UseController::class,'getUserProductList']);
 Route::get('/download',[UseController::class,'downloadFile']);
 Route::get('/getProductByCatSlug/{categorySlug}',[CategoryController::class,'getCategoryIdsAndChildrenBySlug']);
-
-
+Route::put('/updateUser/{id}',[UseController::class,'updateUser']);
+Route::delete('/deleteUser/{id}',[UseController::class,'deleteUser']);
+Route::put('/changePassword/{id}',[UseController::class,'changePassword']);
 
 
 

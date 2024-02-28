@@ -35,13 +35,13 @@ class AuthController extends Controller
         \Log::info('Register request received', ['request' => $request->all()]);
         // register user
         $user = User::create([
-            'username'    => $request->username,
-            'first_name'  => $request->first_name,
-            'last_name'   => $request->last_name,
-            'email'       => $request->email,
-            'password'    => bcrypt($request->password),
-            'orders'      => '0',
-            'revenue'     => '0'
+            'username' => $request->username,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'orders' => '0',
+            'revenue' => '0'
         ]);
 
         // assign role based on request
@@ -64,8 +64,8 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-       $user = $request->user();
-       $user->tokens()->delete();
+        $user = $request->user();
+        $user->tokens()->delete();
 
         return response()->json(['message' => 'Successfully logged out']);
     }
@@ -77,6 +77,7 @@ class AuthController extends Controller
         return response()->json(['expired' => !$user]);
     }
 
+   
 
-    
+
 }
