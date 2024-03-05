@@ -272,19 +272,53 @@ class ProductController extends Controller
 
     public function getBreadcrum($productSlug){
 
-        $products = Products::where('product_slug', $productSlug)
-            ->with(['images']) // Eager load the images relationship
-            ->first();
+        $product = Products::where('product_slug', $productSlug)
+        ->with(['images']) // Eager load the images relationship
+        ->first();
 
-        $productCatagoryId=$products->cat_id;
-        $category3 = Category::where('id', $productCatagoryId)
-                        ->where('isActive', 1)
-                        ->first();
+    if(!$product){
+        return response()->json(['error' => 'Product not found'], 404);
+    }
 
-        
+    $productCategoryId = $product->cat_id;
+    $category = Category::where('id', $productCategoryId)
+                    ->where('isActive', 1)
+                    ->first();
 
-        $breadcrum="/$category3->cat_name/$productSlug";
+    if(!$category){
+        return response()->json(['error' => 'Category not found'], 404);
+    }
 
-        return response()->json(['braedcrum' => $breadcrum]);
+    // Initialize an empty breadcrumb array
+    $breadcrumbs = [];
+
+    // Function to recursively get parent categories until parent_id is 0
+    $getParentCategories = function($categoryId) use (&$getParentCategories, &$breadcrumbs, $category) {
+        $parentCategory = Category::find($categoryId);
+        if ($parentCategory && $parentCategory->parent_id !== 0) {
+            // Push the category name to the breadcrumbs array
+            if ($parentCategory->id !== $category->id) {
+                // Add the category name only if it's not the same as the current category
+                $breadcrumbs[] = $parentCategory->cat_name;
+            }
+            // Recursively call the function with the parent category ID
+            $getParentCategories($parentCategory->parent_id);
+        }
+    };
+
+    // Call the recursive function with the current category's ID
+    $getParentCategories($category->id);
+
+    // Reverse the breadcrumbs array to get the correct order
+    $breadcrumbs = array_reverse($breadcrumbs);
+
+    // Add the current category and product slug to the breadcrumbs array
+    $breadcrumbs[] = $category->cat_name;
+    $breadcrumbs[] = $productSlug;
+
+    // Join the breadcrumbs array with slashes to create the breadcrumb string
+    $breadcrumb = '/' . implode('/', $breadcrumbs);
+
+    return response()->json(['breadcrumb' => $breadcrumb]);
     }
 }
