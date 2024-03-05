@@ -270,5 +270,21 @@ class ProductController extends Controller
         }
     }
 
-    
+    public function getBreadcrum($productSlug){
+
+        $products = Products::where('product_slug', $productSlug)
+            ->with(['images']) // Eager load the images relationship
+            ->first();
+
+        $productCatagoryId=$products->cat_id;
+        $category3 = Category::where('id', $productCatagoryId)
+                        ->where('isActive', 1)
+                        ->first();
+
+        
+
+        $breadcrum="/$category3->cat_name/$productSlug";
+
+        return response()->json(['braedcrum' => $breadcrum]);
+    }
 }

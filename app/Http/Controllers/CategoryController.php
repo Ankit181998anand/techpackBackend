@@ -175,4 +175,20 @@ class CategoryController extends Controller
 
         return response()->json(['products' => $allProducts], 200);
     }
+
+    public function getCategoryBySlug($categorySlug){
+
+        $category = Category::where('cat_slug', $categorySlug)
+                        ->where('isActive', 1)
+                        ->first(); // Execute the query and get the first matching result
+    
+    // Check if category exists
+    if ($category) {
+        // Return the category data as JSON response
+        return response()->json(['category' => $category], 200);
+    } else {
+        // Return a response indicating category not found
+        return response()->json(['error' => 'Category not found'], 404);
+    }
+    }
 }

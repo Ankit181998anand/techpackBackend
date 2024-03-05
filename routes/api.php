@@ -44,6 +44,8 @@ Route::get('/getProductByCatSlug/{categorySlug}',[CategoryController::class,'get
 Route::put('/updateUser/{id}',[UseController::class,'updateUser']);
 Route::delete('/deleteUser/{id}',[UseController::class,'deleteUser']);
 Route::put('/changePassword/{id}',[UseController::class,'changePassword']);
+Route::get('/getCatagoryByCatSlug/{categorySlug}',[CategoryController::class,'getCategoryBySlug']);
+Route::get('/getBreadCeum/{productSlug}',[ProductController::class,'getBreadcrum']);
 
 
 
