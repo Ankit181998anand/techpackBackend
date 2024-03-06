@@ -119,21 +119,21 @@ class ProductController extends Controller
     }
 
     public function getallProductsPublic()
-{
-    $productsWithImagesAndFiles = Products::where('isActive', 1)
-        ->whereHas('images') // Ensure that the product has at least one image
-        ->whereHas('files')  // Ensure that the product has at least one file
-        ->with(['images']) // Eager load the images and files relationships
-        ->get();
+    {
+        $productsWithImagesAndFiles = Products::where('isActive', 1)
+            ->whereHas('images') // Ensure that the product has at least one image
+            ->whereHas('files')  // Ensure that the product has at least one file
+            ->with(['images']) // Eager load the images and files relationships
+            ->get();
 
-    // Manually fetch the category details for each product
-    foreach ($productsWithImagesAndFiles as $product) {
-        $category = DB::table('categories')->select('cat_name')->where('id', $product->cat_id)->first();
-        $product->cat_name = $category->cat_name;
+        // Manually fetch the category details for each product
+        foreach ($productsWithImagesAndFiles as $product) {
+            $category = DB::table('categories')->select('cat_name')->where('id', $product->cat_id)->first();
+            $product->cat_name = $category->cat_name;
+        }
+
+        return response()->json(['products' => $productsWithImagesAndFiles]);
     }
-
-    return response()->json(['products' => $productsWithImagesAndFiles]);
-}
 
 
     public function getProductById($productId)
@@ -186,7 +186,7 @@ class ProductController extends Controller
         // Fetch products with images for the specified category
         $productsWithImages = Products::where('cat_id', $categoryId)
             ->where('isActive', 1)
-            ->whereHas('images') 
+            ->whereHas('images')
             ->whereHas('files')
             ->with('images')
             ->get();
@@ -198,7 +198,7 @@ class ProductController extends Controller
         return response()->json(['products' => $productsWithImages]);
     }
 
-    
+
     public function updateProduct(Request $request, $id)
     {
         $product = Products::findOrFail($id);
@@ -270,55 +270,61 @@ class ProductController extends Controller
         }
     }
 
-    public function getBreadcrum($productSlug){
+    public function getBreadcrum($productSlug)
+    {
 
         $product = Products::where('product_slug', $productSlug)
-        ->with(['images']) // Eager load the images relationship
-        ->first();
+            ->with(['images']) // Eager load the images relationship
+            ->first();
 
-    if(!$product){
-        return response()->json(['error' => 'Product not found'], 404);
-    }
-
-    $productCategoryId = $product->cat_id;
-    $category = Category::where('id', $productCategoryId)
-                    ->where('isActive', 1)
-                    ->first();
-
-    if(!$category){
-        return response()->json(['error' => 'Category not found'], 404);
-    }
-
-    // Initialize an empty breadcrumb array
-    $breadcrumbs = [];
-
-    // Function to recursively get parent categories until parent_id is 0
-    $getParentCategories = function($categoryId) use (&$getParentCategories, &$breadcrumbs, $category) {
-        $parentCategory = Category::find($categoryId);
-        if ($parentCategory && $parentCategory->parent_id !== 0) {
-            // Push the category name to the breadcrumbs array
-            if ($parentCategory->id !== $category->id) {
-                // Add the category name only if it's not the same as the current category
-                $breadcrumbs[] = $parentCategory->cat_name;
-            }
-            // Recursively call the function with the parent category ID
-            $getParentCategories($parentCategory->parent_id);
+        if (!$product) {
+            return response()->json(['error' => 'Product not found'], 404);
         }
-    };
 
-    // Call the recursive function with the current category's ID
-    $getParentCategories($category->id);
+        $productCategoryId = $product->cat_id;
+        $category = Category::where('id', $productCategoryId)
+            ->where('isActive', 1)
+            ->first();
 
-    // Reverse the breadcrumbs array to get the correct order
-    $breadcrumbs = array_reverse($breadcrumbs);
+        if (!$category) {
+            return response()->json(['error' => 'Category not found'], 404);
+        }
 
-    // Add the current category and product slug to the breadcrumbs array
-    $breadcrumbs[] = $category->cat_name;
-    $breadcrumbs[] = $productSlug;
+        // Initialize an empty breadcrumb array
+        $breadcrumbs = [];
 
-    // Join the breadcrumbs array with slashes to create the breadcrumb string
-    $breadcrumb = '/' . implode('/', $breadcrumbs);
+        // Function to recursively get parent categories until parent_id is 0
+        $getParentCategories = function ($categoryId) use (&$getParentCategories, &$breadcrumbs, $category) {
+            $parentCategory = Category::find($categoryId);
+            if ($parentCategory && $parentCategory->parent_id !== 0) {
+                // Push the category name and slug to the breadcrumbs array
+                if ($parentCategory->id !== $category->id) {
+                    // Add the category name and slug only if it's not the same as the current category
+                    $breadcrumbs[] = [
+                        'categoryName' => $parentCategory->cat_name,
+                        'slug' => $parentCategory->cat_slug
+                    ];
+                }
+                // Recursively call the function with the parent category ID
+                $getParentCategories($parentCategory->parent_id);
+            }
+        };
 
-    return response()->json(['breadcrumb' => $breadcrumb]);
+        // Call the recursive function with the current category's ID
+        $getParentCategories($category->id);
+
+        // Reverse the breadcrumbs array to get the correct order
+        $breadcrumbs = array_reverse($breadcrumbs);
+
+        // Add the current category and product slug to the breadcrumbs array
+        $breadcrumbs[] = [
+            'categoryName' => $category->cat_name,
+            'slug' => $category->cat_slug
+        ];
+
+        // Convert the breadcrumbs array to JSON format
+        $breadcrumb = json_encode($breadcrumbs);
+
+        return response()->json(['breadcrumb' => $breadcrumb]);
     }
 }

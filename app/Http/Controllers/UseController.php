@@ -180,7 +180,7 @@ class UseController extends Controller
         return response()->json(['message' => 'User deleted successfully'], 200);
     }
 
-    public function changePassword($id,Request $request)
+    public function changePassword($id, Request $request)
     {
         // Find the user by ID
         $user = User::find($id);
@@ -206,5 +206,25 @@ class UseController extends Controller
 
         // Return a success response
         return response()->json(['message' => 'Password changed successfully'], 200);
+    }
+
+    public function getUserById($userId) {
+        // Retrieve the user from the database based on the user ID
+        $user = User::find($userId);
+
+        // Check if the user exists
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        // Return the user details in JSON format
+        return response()->json([
+            'id' => $user->id,
+            'username' => $user->username,
+            'FirstName' => $user->first_name,
+            'LastName' => $user->last_name,
+            'email' => $user->email,
+            // Add more user details here if needed
+        ]);
     }
 }
