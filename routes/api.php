@@ -36,8 +36,7 @@ Route::get('/getProductBySlug/{productSlug}',[ProductController::class,'getProdu
 Route::get('/getProductByCatId/{categoryId}',[ProductController::class,'getProductsByCategoryId']);
 Route::get('/getCatagoriById/{categoryId}',[CategoryController::class,'getCategoryById']);
 Route::get('/getAllProductPublic',[ProductController::class,'getallProductsPublic']);
-Route::post('/order',[OrderControll::class,'store']);
-Route::put('/completOrders/{orderId}',[OrderControll::class,'updateTransactionId']);
+
 Route::get('/getUserProducts/{userId}',[UseController::class,'getUserProductList']);
 Route::get('/download',[UseController::class,'downloadFile']);
 Route::get('/getProductByCatSlug/{categorySlug}',[CategoryController::class,'getCategoryIdsAndChildrenBySlug']);
@@ -69,6 +68,8 @@ Route::group(['middleware' => ['auth:sanctum','role:Admin']], function () {
     Route::post('/addquery', [ContactController::class, 'insertContact']);
     Route::get('/getquery', [ContactController::class, 'getAllContacts']);
     Route::delete('/deletequery/{id}', [ContactController::class, 'deleteContact']);
+    Route::post('/order',[OrderControll::class,'store']);
+    Route::put('/completOrders/{orderId}',[OrderControll::class,'updateTransactionId']);
 
 });
 
