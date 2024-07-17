@@ -68,6 +68,7 @@ Route::group(['middleware' => ['auth:sanctum','role:Admin']], function () {
     Route::post('/addquery', [ContactController::class, 'insertContact']);
     Route::get('/getquery', [ContactController::class, 'getAllContacts']);
     Route::delete('/deletequery/{id}', [ContactController::class, 'deleteContact']);
+    //order 
     Route::post('/order',[OrderControll::class,'store']);
     Route::put('/completOrders/{orderId}',[OrderControll::class,'updateTransactionId']);
 
